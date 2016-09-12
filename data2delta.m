@@ -33,6 +33,11 @@ vr = 8:10;
 ar = 1:3;
 wr = 4:6;
 
+%% REFER TO SOLA-16 for equations
+%v_out_ = a * _dt;
+%p_out_ = v_out_ * _dt / 2;
+%q_out_ = v2q(w * _dt);
+
 %% Euler integration (zero-order integration) for inputs, non-integration for perturbation (perturbation is already integrated)
 adt = (am - ab)*dt - an;
 wdt = (wm - wb)*dt - wn;
@@ -47,7 +52,9 @@ WDT_wn = -1;
 [dq, DQ_wdt] = v2q(wdt);  % this is exp(wdt)
 
 % projection onto the manifold
-[dv, DV_adt, DV_dq] = qRot(adt,dq); % Eigen does this with: dq * adt
+dv = a*dt;
+DV_adt = 1;
+DV_dq = 0;
 dp = 1.5*dv*dt;
 DP_dv = 1.5*dt;
 DP_adt = DP_dv*DV_adt;
