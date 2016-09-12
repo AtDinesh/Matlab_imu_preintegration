@@ -1,0 +1,94 @@
+% ## Copyright (C) 2016 Joan Solà
+% ## 
+% ## This program is free software; you can redistribute it and/or modify it
+% ## under the terms of the GNU General Public License as published by
+% ## the Free Software Foundation; either version 3 of the License, or
+% ## (at your option) any later version.
+% ## 
+% ## This program is distributed in the hope that it will be useful,
+% ## but WITHOUT ANY WARRANTY; without even the implied warranty of
+% ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% ## GNU General Public License for more details.
+% ## 
+% ## You should have received a copy of the GNU General Public License
+% ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+% 
+% ## -*- texinfo -*- 
+% ## @deftypefn {Function File} {@var{retval} =} deltaPlusDelta (@var{input1}, @var{input2})
+% ##
+% ## @seealso{}
+% ## @end deftypefn
+% 
+% ## Author: Joan Solà <jsola@dhcp-9-225.laas.fr>
+% ## Created: 2016-04-28
+
+function [di_out, DI_OUT_di, DI_OUT_d] = deltaPlusDelta (di, d, dt)
+
+% PArams:
+% In:
+%   di: integrated delta
+%   d : instantaneous delta
+% Out:
+%   di_out: integrated delta
+
+% delta ranges
+pr = 1:3;
+qr = 4:7;
+vr = 8:10;
+
+dpi = di(pr);
+dqi = di(qr);
+dvi = di(vr);
+
+dp = d(pr);
+dq = d(qr);
+dv = d(vr);
+
+% quaternion integration
+[dqi_out, DQI_OUT_dqi, DQI_OUT_dq] = qProd(dqi,dq);
+
+
+% velocity integration
+[dv_tmp, DVT_dv, DVT_dqi_out] =  qRot(dv, dqi_out);
+dvi_out = dvi + dv_tmp;
+DVI_OUT_dvi = 1;
+DVI_OUT_dvt = 1;
+DVI_OUT_dqi = DVI_OUT_dvt * DVT_dqi_out * DQI_OUT_dqi;
+DVI_OUT_dv  = DVI_OUT_dvt * DVT_dv;
+
+% position integration
+dpi_out = dpi + 1.5 * dv_tmp * dt;
+DPI_OUT_dpi = 1;
+DPI_OUT_dvt = 1.5 * dt;
+DPI_OUT_dqi = DPI_OUT_dvt * DVT_dqi_out * DQI_OUT_dqi;
+DPI_OUT_dv  = DPI_OUT_dvt * DVT_dv;
+
+% assemble final delta integrated
+di_out = [dpi_out; dqi_out; dvi_out]; % In this order please!
+
+% Jacobian wrt di
+DI_OUT_di = zeros(10,10);
+DI_OUT_di = vpa(DI_OUT_di); %must be removed
+DI_OUT_di(qr,qr) = DQI_OUT_dqi;
+
+% DI_OUT_di(vr,qr) = DVI_OUT_dqi_out * DQI_OUT_dqi;
+DI_OUT_di(vr,qr) = DVI_OUT_dqi;
+DI_OUT_di(vr,vr) = DVI_OUT_dvi;
+
+% DI_OUT_di(pr,qr) = DPI_OUT_dqi_out * DQI_OUT_dqi;
+DI_OUT_di(pr,qr) = DPI_OUT_dqi;
+%DI_OUT_di(pr,vr) = DPI_OUT_dvt * DVT_dvi; %PROBLEM HERE
+DI_OUT_di(pr,pr) = DPI_OUT_dpi;
+
+
+% Jacobian wrt d
+DI_OUT_d = zeros(10,10);
+DI_OUT_d = vpa(DI_OUT_d); %must be removed
+DI_OUT_d(qr,qr) = DQI_OUT_dq;
+
+DI_OUT_d(vr,qr) = DVI_OUT_dvt * DVT_dqi_out * DQI_OUT_dq;
+DI_OUT_d(vr,vr) = DVI_OUT_dv;
+
+DI_OUT_d(pr,qr) = DPI_OUT_dvt * DVT_dqi_out * DQI_OUT_dq;
+DI_OUT_d(pr,vr) = DPI_OUT_dv;
+end
