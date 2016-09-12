@@ -49,18 +49,21 @@ dv = d(vr);
 
 
 % velocity integration
-[dv_tmp, DVT_dv, DVT_dqi_out] =  qRot(dv, dqi_out);
+[dv_tmp, DVT_dv, DVT_dqi] =  qRot(dv, dqi);
 dvi_out = dvi + dv_tmp;
 DVI_OUT_dvi = 1;
 DVI_OUT_dvt = 1;
-DVI_OUT_dqi = DVI_OUT_dvt * DVT_dqi_out * DQI_OUT_dqi;
+DVI_OUT_dqi = DVI_OUT_dvt * DVT_dqi;
 DVI_OUT_dv  = DVI_OUT_dvt * DVT_dv;
 
 % position integration
-dpi_out = dpi + 1.5 * dv_tmp * dt;
+% dpi_out = dpi + 1.5 * dv_tmp * dt; (OLD version of FORSTER)
+[dp_tmp, DPT_dp, DPT_dqi] = qRot(dp, dqi);
+dpi_out = dpi + dvi * dt + dp_tmp;
+DPI_OUT_dpt = 1;
 DPI_OUT_dpi = 1;
 DPI_OUT_dvt = 1.5 * dt;
-DPI_OUT_dqi = DPI_OUT_dvt * DVT_dqi_out * DQI_OUT_dqi;
+DPI_OUT_dqi = DPI_OUT_dvt * DVT_dqi + DPI_OUT_dpt * DPT_dqi;
 DPI_OUT_dv  = DPI_OUT_dvt * DVT_dv;
 
 % assemble final delta integrated
