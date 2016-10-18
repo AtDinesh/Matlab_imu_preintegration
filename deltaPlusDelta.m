@@ -31,6 +31,11 @@ function [di_out, DI_OUT_di, DI_OUT_d] = deltaPlusDelta (di, d, dt)
 % Out:
 %   di_out: integrated delta
 
+%EQUATIONS
+% dp_out = dpi + dvi*dt + 0.5*qRot(a*dt2, dqi)
+% dv_out = dvi + qRot(a*dt, dqi)
+% dq_out = dqi * Exp(w*dt)
+
 % delta ranges
 pr = 1:3;
 qr = 4:7;
@@ -57,14 +62,13 @@ DVI_OUT_dqi = DVI_OUT_dvt * DVT_dqi;
 DVI_OUT_dv  = DVI_OUT_dvt * DVT_dv;
 
 % position integration
-% dpi_out = dpi + 1.5 * dv_tmp * dt; (OLD version of FORSTER)
 [dp_tmp, DPT_dp, DPT_dqi] = qRot(dp, dqi);
 dpi_out = dpi + dvi * dt + dp_tmp;
 DPI_OUT_dpt = 1;
 DPI_OUT_dpi = 1;
-DPI_OUT_dvt = 1.5 * dt;
-DPI_OUT_dqi = DPI_OUT_dvt * DVT_dqi + DPI_OUT_dpt * DPT_dqi;
-DPI_OUT_dv  = DPI_OUT_dvt * DVT_dv;
+DPI_OUT_dvi = dt;
+DPI_OUT_dqi = DPI_OUT_dpt * DPT_dqi;
+DPI_OUT_dv  = zeros(3,3);
 
 % assemble final delta integrated
 di_out = [dpi_out; dqi_out; dvi_out]; % In this order please!
@@ -80,7 +84,7 @@ DI_OUT_di(vr,vr) = DVI_OUT_dvi;
 
 % DI_OUT_di(pr,qr) = DPI_OUT_dqi_out * DQI_OUT_dqi;
 DI_OUT_di(pr,qr) = DPI_OUT_dqi;
-%DI_OUT_di(pr,vr) = DPI_OUT_dvt * DVT_dvi; %PROBLEM HERE
+DI_OUT_di(pr,vr) = DPI_OUT_dvi;
 DI_OUT_di(pr,pr) = DPI_OUT_dpi;
 
 
@@ -89,9 +93,9 @@ DI_OUT_d = zeros(10,10);
 DI_OUT_d = vpa(DI_OUT_d); %must be removed
 DI_OUT_d(qr,qr) = DQI_OUT_dq;
 
-DI_OUT_d(vr,qr) = DVI_OUT_dvt * DVT_dqi_out * DQI_OUT_dq;
+DI_OUT_d(vr,qr) = zeros(3,4);
 DI_OUT_d(vr,vr) = DVI_OUT_dv;
 
-DI_OUT_d(pr,qr) = DPI_OUT_dvt * DVT_dqi_out * DQI_OUT_dq;
+DI_OUT_d(pr,qr) = zeros(3,4);
 DI_OUT_d(pr,vr) = DPI_OUT_dv;
 end

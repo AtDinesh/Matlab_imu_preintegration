@@ -52,11 +52,11 @@ WDT_wn = -1;
 [dq, DQ_wdt] = v2q(wdt);  % this is exp(wdt)
 
 % projection onto the manifold
-dv = a*dt;
+dv = adt;
 DV_adt = 1;
-DV_dq = 0;
-dp = 1.5*dv*dt;
-DP_dv = 1.5*dt;
+DV_dq = zeros(3,4);
+dp = 0.5*dv*dt;
+DP_dv = 0.5*dt;
 DP_adt = DP_dv*DV_adt;
 
 % Compose final delta vector
@@ -71,11 +71,6 @@ DP_an = DP_adt * ADT_an;
 DP_wn = DP_dv  * DV_wn;
 D_nd = zeros(10,6);
 %D_nd = vpa(D_nd); %must be removed
-% D_nd(qr, wr) = DV_wn;
-% D_nd(vr, ar) = DQ_wn;
-% D_nd(vr, wr) = DV_an;
-% D_nd(pr, ar) = DP_an;
-% D_nd(pr, wr) = DP_wn;
 
 D_nd(qr, wr) = DQ_wn;
 D_nd(vr, ar) = DV_an;
