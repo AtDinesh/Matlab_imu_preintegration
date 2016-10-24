@@ -1,3 +1,12 @@
+%%
+% generate a trajectory using cos and/or sin. Derive twice to get acceleration
+% and give those value to the imu integrator to recompute the trajectory.
+% Using trigonometry is ok : position won't go to infinity + loop.
+
+%THIS IS PURE TRANLSATION
+%rate of turn set to 0 (wx = wy= wz = 0) for all the trajectory.
+
+%%
 close all;
 clear all;
 
