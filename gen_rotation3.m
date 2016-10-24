@@ -9,6 +9,8 @@
 % From formulas for ox, oy and oz, get wx, wy, wz that matches the rate of turn we will give to IMU.
 % Compute data using the imu_integrator with ax=ay=az=0 (pure rotation here).
 
+%*****************************WORKING*********************
+
 %% 
 clear all;
 close all;

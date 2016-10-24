@@ -6,6 +6,7 @@
 %THIS IS PURE TRANLSATION
 %rate of turn set to 0 (wx = wy= wz = 0) for all the trajectory.
 
+%*****************************WORKING*********************
 %%
 close all;
 clear all;
