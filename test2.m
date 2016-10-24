@@ -4,26 +4,26 @@ close all;
 
 %% generate data
 fe = 100;
-N = 30*50;
+N = 30*100;
 t = (0:1/fe:N-1/fe);
 %t = (0:N)/fe;
 
 f_ax = 1; %6;
 f_ay = 1;
-f_az = 1; %3;
+f_az = 0.5; %3;
 f_wx = 1; %2;
-f_wy = 10; %6;
-f_wz = 1; %4;
+f_wy = 7; %6;
+f_wz = 2; %4;
 
 deg_to_rad = 3.14159265359/180.0;
-ax = 20*sin(2*pi*f_ax*t);
-ay = 6*sin(2*pi*f_ay*t);
-az = 6*sin(2*pi*f_az*t);
+ax = 1*sin(f_ax*t);
+ay = 10*sin(f_ay*t);
+az = 5*sin(f_az*t);
 %wx(1,1:(N*fe)) = 1*deg_to_rad; 
 %wy(1,1:(N*fe)) = 1*deg_to_rad;
-wx = (180*sin(2*pi*f_wx*t))*deg_to_rad;
-wy = (300*sin(2*pi*f_wy*t))*deg_to_rad;
-wz = (180*sin(2*pi*f_wz*t))*deg_to_rad;
+wx = (300*sin(f_wx*t))*deg_to_rad;
+wy = (300*sin(f_wy*t))*deg_to_rad;
+wz = (300*sin(f_wz*t))*deg_to_rad;
 %wx = cos(2*pi*f_wx*t);
 %wy = cos(2*pi*f_wy*t);
 %wz = cos(2*pi*f_wz*t);
@@ -31,7 +31,7 @@ wz = (180*sin(2*pi*f_wz*t))*deg_to_rad;
 u = [ax; ay; az; wx; wy; wz];
 %% needed parameters
 
-dt = 0.001;
+dt = 1/fe;
 di = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 %u = [10; 5; 2; 110; 30; 50];
@@ -84,14 +84,14 @@ plot(t, di_t(3,:));
 % plot(t, di_t(10,:));
 
 %% plot input data u
-% figure('Name','input data','NumberTitle','off');
-% subplot(3,1,1);
-% plot(t, u(1,:));
-% hold on;
-% subplot(3,1,2);
-% plot(t, u(2,:));
-% subplot(3,1,3);
-% plot(t, u(3,:));
+figure('Name','input data','NumberTitle','off');
+subplot(3,1,1);
+plot(t, u(1,:));
+hold on;
+subplot(3,1,2);
+plot(t, u(2,:));
+subplot(3,1,3);
+plot(t, u(3,:));
 
 %% plot delta velocity
 % figure('Name','dv','NumberTitle','off');
