@@ -24,6 +24,7 @@ plot3(x,y,z);
 xlabel('x posititon');
 ylabel('y posititon');
 zlabel('z posititon');
+legend('generated trajectory');
 
 deg_to_rad = 3.14159265359/180.0;
 ax = -sin(t);
@@ -67,40 +68,58 @@ for i=1:N*fe-1
     di_t = [di_t, di];
 end
 
-%% Plolt Integrated position
-figure('Name','acceleration','NumberTitle','off');
-subplot(3,1,1);
+%% Plot Integrated position
+figure('Name','Acceleration, Velocity and Position','NumberTitle','off');
+subplot(3,3,1);
 plot(t, ax(1,:));
 hold on;
-subplot(3,1,2);
+xlabel('time');
+ylabel('Acceleration X');
+subplot(3,3,4);
 plot(t, ay(1,:));
-subplot(3,1,3);
+xlabel('time');
+ylabel('Acceleration Y');
+subplot(3,3,7);
 plot(t, az(1,:));
+xlabel('time');
+ylabel('Acceleration Z');
 
-figure('Name','position through time','NumberTitle','off');
-subplot(3,1,1);
+%figure('Name','position through time','NumberTitle','off');
+subplot(3,3,2);
 plot(t, x(1,:));
+xlabel('time');
+ylabel('Velocity X');
 hold on;
-subplot(3,1,2);
+subplot(3,3,5);
 plot(t, y(1,:));
-subplot(3,1,3);
+xlabel('time');
+ylabel('Velocity Y');
+subplot(3,3,8);
 plot(t, z(1,:));
+xlabel('time');
+ylabel('Velocity Z');
 
-figure('Name','velocity through time','NumberTitle','off');
-subplot(3,1,1);
+%figure('Name','velocity through time','NumberTitle','off');
+subplot(3,3,3);
 plot(t, di_t(8,:));
 hold on;
-subplot(3,1,2);
+xlabel('time');
+ylabel('Position X');
+subplot(3,3,6);
 plot(t, di_t(9,:));
-subplot(3,1,3);
+xlabel('time');
+ylabel('Position X');
+subplot(3,3,9);
 plot(t, di_t(10,:));
+xlabel('time');
+ylabel('Position X');
 
 %% 3D plot
-figure('Name','3D position plot','NumberTitle','off');
-plot3(di_t(1,:),di_t(2,:),di_t(3,:));
-xlabel('x posititon');
-ylabel('y posititon');
-zlabel('z posititon');
+% figure('Name','3D position plot','NumberTitle','off');
+% plot3(di_t(1,:),di_t(2,:),di_t(3,:));
+% xlabel('x posititon');
+% ylabel('y posititon');
+% zlabel('z posititon');
 
 % fileID = fopen('data_test_trig.txt','wt');
 % data = [t',u'];
@@ -109,32 +128,32 @@ zlabel('z posititon');
 %     fprintf(fileID,'\n');
 % end
 % fclose(fileID);
-
-figure('Name','2D position plot','NumberTitle','off');
-subplot(3,2,1)
-plot(x,y);
-xlabel('x posititon');
-ylabel('y posititon');
-subplot(3,2,2)
-plot(di_t(1,:),di_t(2,:));
-xlabel('x posititon recons');
-ylabel('y posititon recons');
-subplot(3,2,3)
-plot(x,z);
-xlabel('x posititon');
-ylabel('z posititon');
-subplot(3,2,4)
-plot(di_t(1,:),di_t(3,:));
-xlabel('x posititon recons');
-ylabel('z posititon recons');
-subplot(3,2,5)
-plot(y,z);
-xlabel('y posititon');
-ylabel('z posititon');
-subplot(3,2,6)
-plot(di_t(2,:),di_t(3,:));
-xlabel('y posititon recons');
-ylabel('z posititon recons');
+% 
+% figure('Name','2D position plot','NumberTitle','off');
+% subplot(3,2,1)
+% plot(x,y);
+% xlabel('x posititon');
+% ylabel('y posititon');
+% subplot(3,2,2)
+% plot(di_t(1,:),di_t(2,:));
+% xlabel('x posititon integrated');
+% ylabel('y posititon integrated');
+% subplot(3,2,3)
+% plot(x,z);
+% xlabel('x posititon');
+% ylabel('z posititon');
+% subplot(3,2,4)
+% plot(di_t(1,:),di_t(3,:));
+% xlabel('x posititon integrated');
+% ylabel('z posititon integrated');
+% subplot(3,2,5)
+% plot(y,z);
+% xlabel('y posititon');
+% ylabel('z posititon');
+% subplot(3,2,6)
+% plot(di_t(2,:),di_t(3,:));
+% xlabel('y posititon integrated');
+% ylabel('z posititon integrated');
 
 figure('Name','error','NumberTitle','off')
 subplot(3,1,1);
@@ -156,3 +175,4 @@ plot3(di_t(1,:),di_t(2,:),di_t(3,:), 'g');
 xlabel('x posititon');
 ylabel('y posititon');
 zlabel('z posititon');
+legend('real trajectory', 'integrated trajectory');
