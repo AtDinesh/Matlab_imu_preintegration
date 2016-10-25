@@ -85,34 +85,34 @@ xlabel('time');
 ylabel('Acceleration Z');
 
 %figure('Name','position through time','NumberTitle','off');
-subplot(3,3,2);
+subplot(3,3,3);
 plot(t, x(1,:));
 xlabel('time');
-ylabel('Velocity X');
+ylabel('Position X');
 hold on;
-subplot(3,3,5);
+subplot(3,3,6);
 plot(t, y(1,:));
 xlabel('time');
-ylabel('Velocity Y');
-subplot(3,3,8);
+ylabel('Position Y');
+subplot(3,3,9);
 plot(t, z(1,:));
 xlabel('time');
-ylabel('Velocity Z');
+ylabel('Position Z');
 
 %figure('Name','velocity through time','NumberTitle','off');
-subplot(3,3,3);
+subplot(3,3,2);
 plot(t, di_t(8,:));
 hold on;
 xlabel('time');
-ylabel('Position X');
-subplot(3,3,6);
+ylabel('Velocity X');
+subplot(3,3,5);
 plot(t, di_t(9,:));
 xlabel('time');
-ylabel('Position X');
-subplot(3,3,9);
+ylabel('Velocity Y');
+subplot(3,3,8);
 plot(t, di_t(10,:));
 xlabel('time');
-ylabel('Position X');
+ylabel('Velocity Z');
 
 %% 3D plot
 % figure('Name','3D position plot','NumberTitle','off');
