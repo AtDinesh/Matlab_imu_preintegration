@@ -9,7 +9,7 @@
 % From formulas for ox, oy and oz, get wx, wy, wz that matches the rate of turn we will give to IMU.
 % Compute data using the imu_integrator with ax=ay=az=0 (pure rotation here).
 
-%*****************************WORKING*********************
+%*****************************SEEMS TO BE WORKING*********************
 
 %% 
 clear all;
@@ -122,7 +122,7 @@ ylabel('y posititon');
 zlabel('z posititon');
 legend('reconstructed orientation state', 'real orientation state');
 
-% error
+%% error analysis
 error = total_pos - orientation;
 
 figure('Name','3D orientation error plot','NumberTitle','off');;
@@ -130,6 +130,7 @@ plot3(error(1,:), error(2,:), error(3,:));
 hold on;
 plot3(0,0,0,'r*');
 plot3(1,0,0,'g*');
+axis([0 .15E-11 -.2E-11 .2E-11 -.5E-12 .15E-11]);
 xlabel('x error');
 ylabel('y error');
 zlabel('z error');
@@ -156,7 +157,7 @@ hold on;
 plot(t, ox(1,:),'r');
 xlabel('time');
 ylabel('angle x');
-legend('real orientation state', 'reconstructed orientation state');
+legend('reconstructed orientation state', 'real orientation state');
 hold on;
 subplot(3,1,2);
 plot(t, angle_reconstruct(2,:));
@@ -164,11 +165,44 @@ hold on;
 plot(t, oy(1,:),'r');
 xlabel('time');
 ylabel('angle y');
-legend('real orientation state', 'reconstructed orientation state');
+legend('reconstructed orientation state', 'real orientation state');
 subplot(3,1,3);
 plot(t, angle_reconstruct(3,:));
 hold on;
 plot(t, oz(1,:),'r');
 xlabel('time');
 ylabel('angle z');
-legend('real orientation state', 'reconstructed orientation state');
+legend('reconstructed orientation state', 'real orientation state');
+
+%% test unwrap
+
+% angle_reconstruct2 = angle_reconstruct';
+% angle_reconstruct2(1,:) = 0;
+% angle_reconstruct2(:,1) = unwrap(angle_reconstruct2(:,1));
+% angle_reconstruct2(:,2) = unwrap(angle_reconstruct2(:,2));
+% angle_reconstruct2(:,3) = unwrap(angle_reconstruct2(:,3));
+% 
+% angle_reconstruct2 = angle_reconstruct2';
+% figure('Name','orientation through time','NumberTitle','off');
+% subplot(3,1,1);
+% plot(t, angle_reconstruct2(1,:));
+% hold on;
+% plot(t, ox(1,:),'r');
+% xlabel('time');
+% ylabel('angle x');
+% legend('reconstructed orientation state', 'real orientation state');
+% hold on;
+% subplot(3,1,2);
+% plot(t, angle_reconstruct2(2,:));
+% hold on;
+% plot(t, oy(1,:),'r');
+% xlabel('time');
+% ylabel('angle y');
+% legend('reconstructed orientation state', 'real orientation state');
+% subplot(3,1,3);
+% plot(t, angle_reconstruct2(3,:));
+% hold on;
+% plot(t, oz(1,:),'r');
+% xlabel('time');
+% ylabel('angle z');
+% legend('reconstructed orientation state', 'real orientation state');
