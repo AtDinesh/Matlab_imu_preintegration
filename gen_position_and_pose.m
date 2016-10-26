@@ -195,14 +195,39 @@ hold on;
 plot(t,u(2,:), 'g');
 xlabel('time');
 ylabel('y accel over time');
-legend('ax in local frame', 'ax in global frame');
+legend('ay in local frame', 'ax in global frame');
 subplot(3,1,3);
 plot(t,u1(3,:), 'r');
 hold on;
 plot(t,u(3,:), 'g');
 xlabel('time');
 ylabel('z accel over time');
-legend('ax in local frame', 'ax in global frame');
+legend('az in local frame', 'ax in global frame');
+
+%% checking Velocity
+
+figure('Name','Velocity profile in local frame','NumberTitle','off')
+subplot(3,1,1);
+plot(t,di_t(8,:), 'r');
+hold on;
+xlabel('time');
+ylabel('x velocity over time');
+legend('vx in local frame');
+
+subplot(3,1,2);
+plot(t,di_t(9,:), 'r');
+hold on;
+xlabel('time');
+ylabel('y accel over time');
+legend('vy in local frame');
+
+subplot(3,1,3);
+plot(t,di_t(10,:), 'r');
+hold on;
+xlabel('time');
+ylabel('z accel over time');
+legend('vz in local frame');
+
 
 
 %% write in file
