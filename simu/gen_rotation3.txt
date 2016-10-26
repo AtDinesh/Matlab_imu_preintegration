@@ -1,0 +1,21 @@
+clear all;
+close all;
+
+fe = 1000;
+N = 100*1;
+t = (0:1/fe:N-1/fe);
+
+r = 1;
+alpha = 10;
+beta = 2;
+gamma = 4;
+
+ox = alpha*t*pi/180;
+oy = beta*t*pi/180;
+oz = gamma*t*pi/180;
+
+wx = alpha*pi/180;
+wy = beta*pi/180;
+wz = gamma*pi/180;
+init_pos = [1;0;0];
+pos = [1;0;0];
