@@ -12,7 +12,7 @@ close all;
 clear all;
 
 fe = 1000;
-N = 10*1;
+N = 100*1;
 t = (0:1/fe:N-1/fe);
 
 x = sin(t);
