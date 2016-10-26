@@ -1,3 +1,26 @@
+%% 
+% Testing rotations + translation.
+% Generate a rotation angle on x, y and z axes (ox, oy, oz in radians). These angles change over 
+% time. -> we comput the rate of turn components wx, wy and wz in global
+% frame.
+
+% Interest point also moves in time following sinus function. We
+% compute acceleration components ax, ay and az in global frame. To feed
+% the imu integrator we have to express those components in the local frame
+% of IMU.
+
+% We suppose that IMU local frame initially matches with global frame. This
+% imu is moved and rotated over time. We can deduce the rotation of the imu
+% from the Deltas (that we get from the IMU integrator). Let Q be this
+% quaternion. Then we deduce R the corresponding rotation matrix, G the
+% global frame and L the local frame. Then in term of orientation, we have
+% L = R*G. We can express the acceleration vector in the IMU local frame
+% doing : acc_L = inv(R) * acc_G
+% similar reasoning for rate of turn initially expressed in global frame,
+% we have : w_L = inv(R) * w_G
+
+%*****************************SEEMS TO BE WORKING*********************
+
 %% prepare
 close all;
 clear all;
@@ -7,6 +30,7 @@ N = 10*1;
 t = (0:1/fe:N-1/fe);
 
 write_to_file = false;
+
 %% position + orientation
 %position
 x = sin(t);
@@ -14,9 +38,9 @@ y = sin(2*t);
 z = sin(2*t);
 
 %orientation
-alpha = 10;
-beta = 2;
-gamma = 4;
+alpha = 10; %degree per second rotation around x axis
+beta = 2; %degree per second rotation around y axis
+gamma = 4; %degree per second rotation around z axis
 
 ox = alpha*t*pi/180;
 oy = beta*t*pi/180;
@@ -64,7 +88,7 @@ u1 = [];
 %% test
 
 angle_reconstruct = [];
-u1 = u; % NEED A ROTATION FOR RATE OF TURN ??
+u1 = u; 
 local_x = [1;0;0];
 local_y = [0;1;0];
 local_z = [0;0;1];
@@ -72,8 +96,8 @@ local_z = [0;0;1];
 for i=1:N*fe-1
     %change to local coordinate system
     u1(1:3,i) = inv(R0_1) * u(1:3,i);
-    %u1(4:6,i) = R0_1 * u(4:6,i);
-    d = data2delta(b0, u(:,i), n0, dt);
+    u1(4:6,i) = inv(R0_1) * u(4:6,i);
+    d = data2delta(b0, u1(:,i), n0, dt);
 %% test imu_integrator
 
     di_out0 = imu_integrator(di, d, dt);
@@ -136,7 +160,7 @@ plot3(di_t(1,:), di_t(2,:), di_t(3,:), 'r');
 xlabel('x posititon');
 ylabel('y posititon');
 zlabel('z posititon');
-legend('real orientation state', 'reconstructed orientation state');
+legend('real position', 'reconstructed position');
 
 figure('Name','position error','NumberTitle','off')
 subplot(3,1,1);
@@ -163,7 +187,7 @@ hold on;
 plot(t,u(1,:), 'g');
 xlabel('time');
 ylabel('x accel over time');
-legend('ax in local frame', 'ax uin global frame');
+legend('ax in local frame', 'ax in global frame');
 hold on;
 subplot(3,1,2);
 plot(t,u1(2,:), 'r');
@@ -171,7 +195,7 @@ hold on;
 plot(t,u(2,:), 'g');
 xlabel('time');
 ylabel('y accel over time');
-legend('ax in local frame', 'ax uin global frame');
+legend('ax in local frame', 'ax in global frame');
 subplot(3,1,3);
 plot(t,u1(3,:), 'r');
 hold on;
@@ -179,8 +203,6 @@ plot(t,u(3,:), 'g');
 xlabel('time');
 ylabel('z accel over time');
 legend('ax in local frame', 'ax in global frame');
-
-%%
 
 
 %% write in file
