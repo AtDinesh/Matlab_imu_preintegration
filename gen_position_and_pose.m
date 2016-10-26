@@ -38,9 +38,9 @@ y = sin(2*t);
 z = sin(2*t);
 
 %orientation
-alpha = 10; %degree per second rotation around x axis
-beta = 2; %degree per second rotation around y axis
-gamma = 4; %degree per second rotation around z axis
+alpha = 50; %degree per second rotation around x axis
+beta = 70; %degree per second rotation around y axis
+gamma = 100; %degree per second rotation around z axis
 
 ox = alpha*t*pi/180;
 oy = beta*t*pi/180;
