@@ -35,7 +35,7 @@ write_to_file = false;
 %position
 x = sin(t);
 y = sin(2*t);
-z = sin(2*t);
+z = sin(5*t);
 
 %orientation
 alpha = 50; %degree per second rotation around x axis
@@ -50,7 +50,7 @@ oz = gamma*t*pi/180;
 deg_to_rad = 3.14159265359/180.0;
 ax = -sin(t);
 ay = -4*sin(2*t);
-az = -4*sin(2*t);
+az = -25*sin(5*t);
 wx(1,1:(N*fe)) = alpha*pi/180;
 wy(1,1:(N*fe)) = beta*pi/180;
 wz(1,1:(N*fe)) = gamma*pi/180;
@@ -59,7 +59,7 @@ u = [ax; ay; az; wx; wy; wz];
 %% needed parameters
 
 dt = 1/fe;
-di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 2];
+di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 5];
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 %u = [10; 5; 2; 110; 30; 50];
 
