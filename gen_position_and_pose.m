@@ -46,6 +46,8 @@ ox = alpha*t*pi/180;
 oy = beta*t*pi/180;
 oz = gamma*t*pi/180;
 
+o = [ox; oy; oz];
+
 %% construct data in R0
 deg_to_rad = 3.14159265359/180.0;
 ax = -sin(t);
@@ -233,7 +235,7 @@ legend('vz in local frame');
 %% write in file
 
 if(write_to_file)
-    fileID = fopen('data_final_test_az.txt','wt');
+    fileID = fopen('data_final_test.txt','wt');
     data = [t',u1'];
     for ii = 1:size(data,1)
         fprintf(fileID,'%g\t',data(ii,:));
@@ -241,8 +243,8 @@ if(write_to_file)
     end
     fclose(fileID);
     
-    fileID_check = fopen('data_final_test_checkPosition_az.txt','wt');
-    data = [t',x',y',z'];
+    fileID_check = fopen('data_final_test_checkPosition.txt','wt');
+    data = [t',x',y',z', o'];
     for ii = 1:size(data,1)
         fprintf(fileID_check,'%g\t',data(ii,:));
         fprintf(fileID_check,'\n');
