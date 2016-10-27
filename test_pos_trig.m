@@ -11,6 +11,8 @@
 close all;
 clear all;
 
+write_to_file = false;
+
 fe = 1000;
 N = 10*1;
 t = (0:1/fe:N-1/fe);
@@ -34,6 +36,12 @@ wx(1,1:(N*fe)) = 0*deg_to_rad;
 wy(1,1:(N*fe)) = 0*deg_to_rad;
 wz(1,1:(N*fe)) = 0*deg_to_rad;
 u = [ax; ay; az; wx; wy; wz];
+
+ox = 0*t;
+oy = 0*t;
+oz = 0*t;
+
+o = [ox; oy; oz];
 
 %% needed parameters
 
@@ -176,3 +184,23 @@ xlabel('x posititon');
 ylabel('y posititon');
 zlabel('z posititon');
 legend('real trajectory', 'integrated trajectory');
+
+%% write data in file
+
+if(write_to_file)
+    fileID = fopen('data_pure_translation.txt','wt');
+    data = [t',u'];
+    for ii = 1:size(data,1)
+        fprintf(fileID,'%g\t',data(ii,:));
+        fprintf(fileID,'\n');
+    end
+    fclose(fileID);
+    
+    fileID_check = fopen('data_pure_translation_check.txt','wt');
+    data = [t',x',y',z', o'];
+    for ii = 1:size(data,1)
+        fprintf(fileID_check,'%g\t',data(ii,:));
+        fprintf(fileID_check,'\n');
+    end
+    fclose(fileID_check);
+end
