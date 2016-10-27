@@ -1,0 +1,34 @@
+fe = 1000;
+N = 100*1;
+t = (0:1/fe:N-1/fe);
+
+x = sin(t);
+y = sin(2*t);
+z = sin(2*t);
+
+figure('Name','3D position plot','NumberTitle','off');
+plot3(x,y,z);
+xlabel('x posititon');
+ylabel('y posititon');
+zlabel('z posititon');
+legend('generated trajectory');
+
+deg_to_rad = 3.14159265359/180.0;
+ax = -sin(t);
+ay = -4*sin(2*t);
+az = -4*sin(2*t);
+wx(1,1:(N*fe)) = 0*deg_to_rad; 
+wy(1,1:(N*fe)) = 0*deg_to_rad;
+wz(1,1:(N*fe)) = 0*deg_to_rad;
+u = [ax; ay; az; wx; wy; wz];
+
+ox = 0*t;
+oy = 0*t;
+oz = 0*t;
+
+o = [ox; oy; oz];
+
+dt = 0.001;
+di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 2];
+b0 = [0; 0; 0; 0; 0; 0]; %bias vector
+n0 = [0; 0; 0; 0; 0; 0]; %noise vector
