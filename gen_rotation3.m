@@ -39,6 +39,10 @@ ox = alpha*t*pi/180;
 oy = beta*t*pi/180;
 oz = gamma*t*pi/180;
 
+x(1,1:(N*fe)) = 0*t;
+y(1,1:(N*fe)) = 0*t;
+z(1,1:(N*fe)) = 0*t;
+
 %rate of turn expressed in radians/s
 wx = alpha*pi/180;
 wy = beta*pi/180;
@@ -47,13 +51,13 @@ init_pos = [1;0;0];
 pos = [1;0;0];
 
 total_pos = [];
-v = [ox(1,:); oy(1,:); oz(1,:)]; %this is the evolution of rotations
+o = [ox; oy; oz]; %this is the evolution of rotations
 
 %For each [ox; oy; oz] compute the corresponding 3D rotation matrix
 %Apply this rotation matrix to the unit vector [1;0;0] to visualize the
 %effect
-for ii= 1:size(v,2)
-    Rot = v2R(v(:,ii));
+for ii= 1:size(o,2)
+    Rot = v2R(o(:,ii));
     pos = Rot*init_pos;
     total_pos = [total_pos pos];
 end
@@ -83,7 +87,7 @@ u = [ax; ay; az; wx; wy; wz];
 %% needed parameters
 
 dt = 1/fe;
-di = [1; 0; 0; 1; 0; 0; 0; 0; 0; 0];
+di = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 %u = [10; 5; 2; 110; 30; 50];
 
@@ -206,7 +210,7 @@ if(write_to_file)
     disp('imu data written in file data_pure_rotation.txt');
     
     fileID_check = fopen('data_pure_rotation_check.txt','wt');
-    data = [t',v'];
+    data = [t',x',y',z', o'];
     for ii = 1:size(data,1)
         fprintf(fileID_check,'%g\t',data(ii,:));
         fprintf(fileID_check,'\n');
