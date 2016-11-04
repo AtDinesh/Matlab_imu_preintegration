@@ -243,7 +243,7 @@ if(write_to_file)
     end
     fclose(fileID);
     
-    fileID_check = fopen('data_final_test_checkPosition.txt','wt');
+    fileID_check = fopen('data_final_test_check.txt','wt');
     data = [t',x',y',z', o'];
     for ii = 1:size(data,1)
         fprintf(fileID_check,'%g\t',data(ii,:));
