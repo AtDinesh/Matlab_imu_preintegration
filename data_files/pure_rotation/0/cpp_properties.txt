@@ -1,0 +1,5 @@
+    Eigen::VectorXs x0(16);
+    x0 << 0,0,0,  0,0,0,  0,0,0,1,  0,0,0,  0,0,0; // Try some non-zero biases
+    Eigen::VectorXs D0(10);
+    D0 << 0,0,0,  0,0,0,  0,0,0,1;
+    wolf_problem_ptr_->getProcessorMotionPtr()->setOrigin(x0, t, D0);
