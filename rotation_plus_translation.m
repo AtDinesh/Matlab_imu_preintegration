@@ -33,37 +33,40 @@ write_to_file = false;
 
 %% position + orientation
 %position
-x = sin(t);
-y = sin(2*t);
-z = sin(2*t);
+p_alpha = 1;
+p_beta = 2;
+p_gamma = 5;
+
+x = sin(p_alpha*t);
+y = sin(p_beta*t);
+z = sin(p_gamma*t);
 
 %orientation
-alpha = 50; %degree per second rotation around x axis
-beta = 70; %degree per second rotation around y axis
-gamma = 100; %degree per second rotation around z axis
+alpha = 5;
+beta = 2.4;
+gamma = 3;
 
-ox = alpha*t*pi/180;
-oy = beta*t*pi/180;
-oz = gamma*t*pi/180;
+ox = sin(alpha*t)*pi;
+oy = sin(beta*t)*pi;
+oz = sin(gamma*t)*pi;
 
 o = [ox; oy; oz];
 
 %% construct data in R0
 deg_to_rad = 3.14159265359/180.0;
-ax = -sin(t);
-ay = -4*sin(2*t);
-az = -4*sin(2*t);
-wx(1,1:(N*fe)) = alpha*pi/180;
-wy(1,1:(N*fe)) = beta*pi/180;
-wz(1,1:(N*fe)) = gamma*pi/180;
+ax = -p_alpha*p_alpha*sin(p_alpha*t);
+ay = -p_beta*p_beta*sin(p_beta*t);
+az = -p_gamma*p_gamma*sin(p_gamma*t);
+wx = pi*alpha*cos(alpha*t);
+wy = pi*beta*cos(beta*t);
+wz = pi*gamma*cos(gamma*t);
 u = [ax; ay; az; wx; wy; wz];
 
 %% needed parameters
 
 dt = 1/fe;
-di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 2];
+di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 5];
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
-%u = [10; 5; 2; 110; 30; 50];
 
 b0 = [0; 0; 0; 0; 0; 0]; %bias vector
 
