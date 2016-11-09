@@ -26,7 +26,7 @@ close all;
 clear all;
 
 fe = 1000;
-N = 10*1;
+N = 100*1;
 t = (0:1/fe:N-1/fe);
 
 write_to_file = false;
@@ -65,7 +65,7 @@ u = [ax; ay; az; wx; wy; wz];
 %% needed parameters
 
 dt = 1/fe;
-di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 5];
+di = [0; 0; 0; 1; 0; 0; 0; p_alpha; p_beta; p_gamma];
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 
 b0 = [0; 0; 0; 0; 0; 0]; %bias vector
