@@ -57,9 +57,9 @@ deg_to_rad = 3.14159265359/180.0;
 ax = -p_alpha*p_alpha*sin(p_alpha*t);
 ay = -p_beta*p_beta*sin(p_beta*t);
 az = -p_gamma*p_gamma*sin(p_gamma*t);
-wx = alpha*cos(alpha*t)*pi/180;
-wy = beta*cos(beta*t)*pi/180;
-wz = gamma*cos(gamma*t)*pi/180;
+wx = alpha*cos(alpha*t*pi/180)*pi/180;
+wy = beta*cos(beta*t*pi/180)*pi/180;
+wz = gamma*cos(gamma*t*pi/180)*pi/180;
 u = [ax; ay; az; wx; wy; wz];
 
 %% needed parameters
