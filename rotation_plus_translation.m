@@ -46,9 +46,9 @@ alpha = 5;
 beta = 2.4;
 gamma = 3;
 
-ox = sin(alpha*t)*pi;
-oy = sin(beta*t)*pi;
-oz = sin(gamma*t)*pi;
+ox = sin(alpha*t*pi/180); %express angle in rad before using sinus
+oy = sin(beta*t*pi/180);
+oz = sin(gamma*t*pi/180);
 
 o = [ox; oy; oz];
 
@@ -57,9 +57,9 @@ deg_to_rad = 3.14159265359/180.0;
 ax = -p_alpha*p_alpha*sin(p_alpha*t);
 ay = -p_beta*p_beta*sin(p_beta*t);
 az = -p_gamma*p_gamma*sin(p_gamma*t);
-wx = pi*alpha*cos(alpha*t);
-wy = pi*beta*cos(beta*t);
-wz = pi*gamma*cos(gamma*t);
+wx = alpha*cos(alpha*t)*pi/180;
+wy = beta*cos(beta*t)*pi/180;
+wz = gamma*cos(gamma*t)*pi/180;
 u = [ax; ay; az; wx; wy; wz];
 
 %% needed parameters
