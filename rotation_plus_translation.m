@@ -26,7 +26,7 @@ close all;
 clear all;
 
 fe = 1000;
-N = 100*1;
+N = 10*1;
 t = (0:1/fe:N-1/fe);
 
 write_to_file = false;
@@ -42,13 +42,13 @@ y = sin(p_beta*t);
 z = sin(p_gamma*t);
 
 %orientation
-alpha = 5;
-beta = 2.4;
-gamma = 3;
+alpha = 20;
+beta = 10;
+gamma = 30;
 
-ox = sin(alpha*t*pi/180); %express angle in rad before using sinus
-oy = sin(beta*t*pi/180);
-oz = sin(gamma*t*pi/180);
+ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
+oy = pi*sin(beta*t*pi/180);
+oz = pi*sin(gamma*t*pi/180);
 
 o = [ox; oy; oz];
 
@@ -57,9 +57,9 @@ deg_to_rad = 3.14159265359/180.0;
 ax = -p_alpha*p_alpha*sin(p_alpha*t);
 ay = -p_beta*p_beta*sin(p_beta*t);
 az = -p_gamma*p_gamma*sin(p_gamma*t);
-wx = alpha*cos(alpha*t*pi/180)*pi/180;
-wy = beta*cos(beta*t*pi/180)*pi/180;
-wz = gamma*cos(gamma*t*pi/180)*pi/180;
+wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
+wy = pi*beta*cos(beta*t*pi/180)*pi/180;
+wz = pi*gamma*cos(gamma*t*pi/180)*pi/180;
 u = [ax; ay; az; wx; wy; wz];
 
 %% needed parameters
