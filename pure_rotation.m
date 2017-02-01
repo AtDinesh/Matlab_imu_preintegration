@@ -102,6 +102,7 @@ legend('effect of rotations on unit vector', 'Frame origin', 'starting point [1;
 ax(1,1:(N*fe)) = 0;
 ay(1,1:(N*fe)) = 0;
 az(1,1:(N*fe)) = 0;
+a0 = [0; 0; 9.806];
 wx(1,1:(N*fe)) = wx; 
 wy(1,1:(N*fe)) = wy;
 wz(1,1:(N*fe)) = wz;
@@ -137,6 +138,8 @@ u1 = [];
 % state to next state. The angle information is stored in quaternion
 for i=1:N*fe
     R0_1 = v2R(o(:,i));
+    aR = inv(R0_1) * a0;
+    u(1:3,i) = u(1:3,i) + aR;
     u1(1:3,i) = inv(R0_1) * u(1:3,i);
     %u1(4:6,i) = inv(R0_1) * u(4:6,i);
     u1(4:6,i) = u(4:6,i);
