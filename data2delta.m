@@ -62,42 +62,44 @@ DP_adt = DP_dv*DV_adt;
 % Compose final delta vector
 d = [dp ; dq ; dv]; % This order, please!
 
-%DV_dq = homogenize(DV_dq);
-%% Jacobian wrt bias perturbation in discrete time
-DQ_wn = DQ_wdt * WDT_wn;
-DV_an = DV_adt * ADT_an;
-DV_wn = DV_dq  * DQ_wn;
-DP_an = DP_adt * ADT_an;
-DP_wn = DP_dv  * DV_wn;
-D_nd = zeros(10,6);
-%D_nd = vpa(D_nd); %must be removed
+if nargout > 1
+    %DV_dq = homogenize(DV_dq);
+    %% Jacobian wrt bias perturbation in discrete time
+    DQ_wn = DQ_wdt * WDT_wn;
+    DV_an = DV_adt * ADT_an;
+    DV_wn = DV_dq  * DQ_wn;
+    DP_an = DP_adt * ADT_an;
+    DP_wn = DP_dv  * DV_wn;
+    D_nd = zeros(10,6);
+    %D_nd = vpa(D_nd); %must be removed
 
-D_nd(qr, wr) = DQ_wn;
-D_nd(vr, ar) = DV_an;
-D_nd(vr, wr) = DV_wn;
-D_nd(pr, ar) = DP_an;
-D_nd(pr, wr) = DP_wn;
+    D_nd(qr, wr) = DQ_wn;
+    D_nd(vr, ar) = DV_an;
+    D_nd(vr, wr) = DV_wn;
+    D_nd(pr, ar) = DP_an;
+    D_nd(pr, wr) = DP_wn;
 
-%% Jacobian wrt bias
+    %% Jacobian wrt bias
 
-%DQ_wb = DQ_wdt * WDT_wb;
-%DV_ab = DV_adt * ADT_ab;
-%DV_wb = DV_dq  * DQ_wb;
-%DP_ab = DP_adt * ADT_ab;
-%DP_wb = DP_dv  * DV_wb;
+    %DQ_wb = DQ_wdt * WDT_wb;
+    %DV_ab = DV_adt * ADT_ab;
+    %DV_wb = DV_dq  * DQ_wb;
+    %DP_ab = DP_adt * ADT_ab;
+    %DP_wb = DP_dv  * DV_wb;
 
-%D_b = zeros(10,6);
-%D_b(qr, wr) = DV_wb;
-%D_b(vr, ar) = DQ_wb;
-%D_b(vr, wr) = DV_ab;
-%D_b(pr, ar) = DP_ab;
-%D_b(pr, wr) = DP_wb;
+    %D_b = zeros(10,6);
+    %D_b(qr, wr) = DV_wb;
+    %D_b(vr, ar) = DQ_wb;
+    %D_b(vr, wr) = DV_ab;
+    %D_b(pr, ar) = DP_ab;
+    %D_b(pr, wr) = DP_wb;
+    
+    % This boils down to:
+    D_b = D_nd * dt;
 
-% This boils down to:
-D_b = D_nd * dt;
-
-%% Jacobian wrt measurement
-D_u = -D_b; % we are not going to use it because the measurement is deterministic
+    %% Jacobian wrt measurement
+    D_u = -D_b; % we are not going to use it because the measurement is deterministic
+end
 
 end
 

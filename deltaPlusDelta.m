@@ -56,46 +56,52 @@ dv = d(vr);
 % velocity integration
 [dv_tmp, DVT_dv, DVT_dqi] =  qRot(dv, dqi);
 dvi_out = dvi + dv_tmp;
-DVI_OUT_dvi = 1;
-DVI_OUT_dvt = 1;
-DVI_OUT_dqi = DVI_OUT_dvt * DVT_dqi;
-DVI_OUT_dv  = DVI_OUT_dvt * DVT_dv;
+if nargout > 2
+    DVI_OUT_dvi = 1;
+    DVI_OUT_dvt = 1;
+    DVI_OUT_dqi = DVI_OUT_dvt * DVT_dqi;
+    DVI_OUT_dv  = DVI_OUT_dvt * DVT_dv;
+end
 
 % position integration
 [dp_tmp, DPT_dp, DPT_dqi] = qRot(dp, dqi);
 dpi_out = dpi + dvi * dt + dp_tmp;
-DPI_OUT_dpt = 1;
-DPI_OUT_dpi = 1;
-DPI_OUT_dvi = dt;
-DPI_OUT_dqi = DPI_OUT_dpt * DPT_dqi;
-DPI_OUT_dv  = zeros(3,3);
+if nargout > 2
+    DPI_OUT_dpt = 1;
+    DPI_OUT_dpi = 1;
+    DPI_OUT_dvi = dt;
+    DPI_OUT_dqi = DPI_OUT_dpt * DPT_dqi;
+    DPI_OUT_dv  = zeros(3,3);
+end
 
 % assemble final delta integrated
 di_out = [dpi_out; dqi_out; dvi_out]; % In this order please!
 
-% Jacobian wrt di
-DI_OUT_di = zeros(10,10);
-DI_OUT_di = vpa(DI_OUT_di); %must be removed
-DI_OUT_di(qr,qr) = DQI_OUT_dqi;
-
-% DI_OUT_di(vr,qr) = DVI_OUT_dqi_out * DQI_OUT_dqi;
-DI_OUT_di(vr,qr) = DVI_OUT_dqi;
-DI_OUT_di(vr,vr) = DVI_OUT_dvi;
-
-% DI_OUT_di(pr,qr) = DPI_OUT_dqi_out * DQI_OUT_dqi;
-DI_OUT_di(pr,qr) = DPI_OUT_dqi;
-DI_OUT_di(pr,vr) = DPI_OUT_dvi;
-DI_OUT_di(pr,pr) = DPI_OUT_dpi;
-
-
-% Jacobian wrt d
-DI_OUT_d = zeros(10,10);
-DI_OUT_d = vpa(DI_OUT_d); %must be removed
-DI_OUT_d(qr,qr) = DQI_OUT_dq;
-
-DI_OUT_d(vr,qr) = zeros(3,4);
-DI_OUT_d(vr,vr) = DVI_OUT_dv;
-
-DI_OUT_d(pr,qr) = zeros(3,4);
-DI_OUT_d(pr,vr) = DPI_OUT_dv;
+if nargout > 2
+    % Jacobian wrt di
+    DI_OUT_di = zeros(10,10);
+    DI_OUT_di = vpa(DI_OUT_di); %must be removed
+    DI_OUT_di(qr,qr) = DQI_OUT_dqi;
+    
+    % DI_OUT_di(vr,qr) = DVI_OUT_dqi_out * DQI_OUT_dqi;
+    DI_OUT_di(vr,qr) = DVI_OUT_dqi;
+    DI_OUT_di(vr,vr) = DVI_OUT_dvi;
+    
+    % DI_OUT_di(pr,qr) = DPI_OUT_dqi_out * DQI_OUT_dqi;
+    DI_OUT_di(pr,qr) = DPI_OUT_dqi;
+    DI_OUT_di(pr,vr) = DPI_OUT_dvi;
+    DI_OUT_di(pr,pr) = DPI_OUT_dpi;
+    
+    
+    % Jacobian wrt d
+    DI_OUT_d = zeros(10,10);
+    DI_OUT_d = vpa(DI_OUT_d); %must be removed
+    DI_OUT_d(qr,qr) = DQI_OUT_dq;
+    
+    DI_OUT_d(vr,qr) = zeros(3,4);
+    DI_OUT_d(vr,vr) = DVI_OUT_dv;
+    
+    DI_OUT_d(pr,qr) = zeros(3,4);
+    DI_OUT_d(pr,vr) = DPI_OUT_dv;
+end
 end
