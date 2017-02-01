@@ -26,7 +26,7 @@ close all;
 clear all;
 
 fe = 1000;
-N = 10*1;
+N = 5*1;
 t = (0:1/fe:N-1/fe);
 
 write_to_file = false;
@@ -43,14 +43,31 @@ z = sin(p_gamma*t);
 
 %orientation
 alpha = 20;
-beta = 10;
-gamma = 30;
+beta = 20;
+gamma = 20;
 
 ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
 oy = pi*sin(beta*t*pi/180);
 oz = pi*sin(gamma*t*pi/180);
 
 o = [ox; oy; oz];
+v = [ox(1,:); oy(1,:); oz(1,:)]; %this is the evolution of rotations
+for i= 1:size(o,2)
+    o(:,i) = q2v(v2q(o(:,i)));
+end
+if isnan(o(1,1))
+    o(1,1) = 0;
+end
+if isnan(o(2,1))
+    o(2,1) = 0;
+end
+if isnan(o(3,1))
+    o(3,1) = 0;
+end
+
+ox = o(1,:);
+oy = o(2,:);
+oz = o(3,:);
 
 %% construct data in R0
 deg_to_rad = 3.14159265359/180.0;
@@ -94,21 +111,21 @@ u1 = [];
 
 angle_reconstruct = [];
 u1 = u; 
-local_x = [1;0;0];
-local_y = [0;1;0];
-local_z = [0;0;1];
 
 for i=1:N*fe-1
     %change to local coordinate system
     u1(1:3,i) = inv(R0_1) * u(1:3,i);
-    u1(4:6,i) = inv(R0_1) * u(4:6,i);
+    u1(4:6,i) = u(4:6,i);
+    %u1(4:6,i) = inv(R0_1) * u(4:6,i);
     d = data2delta(b0, u1(:,i), n0, dt);
 %% test imu_integrator
 
     di_out0 = imu_integrator(di, d, dt);
     di=di_out0;
-    R0_1 = q2R(di_out0(4:7)); %update the rotation matrix to pass from global to local
+    %R0_1 = q2R(di_out0(4:7)); %update the rotation matrix to pass from global to local
     di_t = [di_t, di];
+    %update matrix that will be used to change from global to local frame
+    R0_1 = v2R(o(:,i));
 end
 
 %% ANALYZE             ******************* PLOTTING PART *******************
@@ -120,6 +137,15 @@ end
 for j=1:size(di_t,2)
     q =  di_t(qr,j);
     angle_reconstruct = [angle_reconstruct q2v(q)];
+end
+if isnan(angle_reconstruct(1,1))
+    angle_reconstruct(1,1) = 0;
+end
+if isnan(angle_reconstruct(2,1))
+    angle_reconstruct(2,1) = 0;
+end
+if isnan(angle_reconstruct(3,1))
+    angle_reconstruct(3,1) = 0;
 end
 
 figure('Name','orientation through time','NumberTitle','off');
@@ -162,6 +188,7 @@ figure('Name','3D position plot','NumberTitle','off');
 plot3(x,y,z, 'g');
 hold on;
 plot3(di_t(1,:), di_t(2,:), di_t(3,:), 'r');
+plot3(0,0,0,'g*');
 xlabel('x posititon');
 ylabel('y posititon');
 zlabel('z posititon');
@@ -233,7 +260,41 @@ xlabel('time');
 ylabel('z accel over time');
 legend('vz in local frame');
 
+%% plot input data
 
+figure('Name','Input data','NumberTitle','off')
+subplot(3,2,1);
+plot(t,u1(1,:), 'r');
+xlabel('time');
+ylabel('input ax over time');
+legend('ax in local frame');
+
+subplot(3,2,3);
+plot(t,u1(2,:), 'r');
+xlabel('time');
+ylabel('input ay over time');
+legend('ay in local frame');
+
+subplot(3,2,5);
+plot(t,u1(3,:), 'r');
+xlabel('time');
+ylabel('input az over time');
+legend('az in local frame');
+
+subplot(3,2,2);
+plot(t,u1(4,:), 'r');
+xlabel('time');
+ylabel('input wx over time');
+
+subplot(3,2,4);
+plot(t,u1(5,:), 'r');
+xlabel('time');
+ylabel('input wy over time');
+
+subplot(3,2,6);
+plot(t,u1(6,:), 'r');
+xlabel('time');
+ylabel('input wz over time');
 
 %% write in file
 

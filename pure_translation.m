@@ -11,6 +11,7 @@
 close all;
 clear all;
 
+write_to_file_const = true;
 write_to_file = false;
 
 fe = 1000;
@@ -20,6 +21,8 @@ t = (0:1/fe:N-1/fe);
 x = sin(t);
 y = sin(2*t);
 z = sin(2*t);
+
+p = [x; y; z];
 
 figure('Name','3D position plot','NumberTitle','off');
 plot3(x,y,z);
@@ -46,7 +49,7 @@ o = [ox; oy; oz];
 %% needed parameters
 
 dt = 0.001;
-di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 2];
+di = [0; 0; 0; 1; 0; 0; 0; 1.0; 2.0; 2.0];
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 
 b0 = [0; 0; 0; 0; 0; 0]; %bias vector
@@ -199,6 +202,35 @@ if(write_to_file)
     data = [t',x',y',z', o'];
     for ii = 1:size(data,1)
         fprintf(fileID_check,'%g\t',data(ii,:));
+        fprintf(fileID_check,'\n');
+    end
+    fclose(fileID_check);
+end
+
+
+if(write_to_file_const)
+    fileID = fopen('data_pure_translation.txt','wt');
+    data = [t',u'];
+    for ii = 1:size(data,1)
+        fprintf(fileID,'%g\t',data(ii,:));
+        fprintf(fileID,'\n');
+    end
+    fclose(fileID);
+    
+    fileID_check = fopen('odom.txt','wt');
+    step = 50;
+    step_up = step+1;
+    t_odom = [];
+    p_odom = [];
+    o_odom = [];
+    for iter = step_up:step:size(x,2)
+        t_odom = [t_odom, t(:,iter) - t(:,iter - step)];
+        p_odom = [p_odom, p(:,iter) - p(:,iter - step)];
+        o_odom = [o_odom, o(:,iter) - o(:,iter - step)];
+    end
+    odom = [t_odom', p_odom',o_odom'];
+    for ii = 1:size(odom,1)
+        fprintf(fileID_check,'%g\t',odom(ii,:));
         fprintf(fileID_check,'\n');
     end
     fclose(fileID_check);
