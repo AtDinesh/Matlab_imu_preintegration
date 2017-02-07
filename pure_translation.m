@@ -11,12 +11,12 @@
 close all;
 clear all;
 
-write_to_file_const = true;
+write_to_file_const = false;
 write_to_file = false;
 
 fe = 1000;
 N = 10*1;
-t = (0:1/fe:N-1/fe);
+t = (0:1/fe:(N-1/fe)+1/fe);
 
 x = sin(t);
 y = sin(2*t);
@@ -36,9 +36,9 @@ ax = -sin(t);
 ay = -4*sin(2*t);
 az = -4*sin(2*t);
 a0 = [0; 0; 9.806];
-wx(1,1:(N*fe)) = 0*deg_to_rad; 
-wy(1,1:(N*fe)) = 0*deg_to_rad;
-wz(1,1:(N*fe)) = 0*deg_to_rad;
+wx(1,1:(N*fe)+1) = 0*deg_to_rad; %+1 to get the data at timestamp 10s in IMU + odom
+wy(1,1:(N*fe)+1) = 0*deg_to_rad;
+wz(1,1:(N*fe)+1) = 0*deg_to_rad;
 u = [ax; ay; az; wx; wy; wz];
 
 ox = 0*t;
@@ -51,6 +51,7 @@ o = [ox; oy; oz];
 
 dt = 0.001;
 di = [0; 0; 0; 1; 0; 0; 0; 1.0; 2.0; 2.0];
+initial_condition = di;
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 
 b0 = [0; 0; 0; 0; 0; 0]; %bias vector
@@ -64,24 +65,28 @@ n_wz = 0.002*randn(1,(N*fe));
 n0 = [0; 0; 0; 0; 0; 0]; %noise vector
 n = [n_ax; n_ay; n_az; n_wx; n_wy; n_wz]; %noise vector
 
-di_t = di;
+di_t = [];
 di_t0 = di0;
 
 %FORMULATION IS PQV
 %UNIT QUATERNION IS [1 0 0 0]
 
-for i=1:N*fe-1
+for i=1:N*fe+1
     R0_1 = v2R(o(:,i));
     aR = inv(R0_1) * a0;
     %u(1:3,i) = u(1:3,i) + aR;
     u1(1:3,i) = inv(R0_1) * u(1:3,i) + aR;
-    d = data2delta(b0, u(:,i), n0, dt);
+    u1(4:6,i) = u(4:6,i);
+    d = data2delta(b0, u1(:,i), n0, dt);
 %% test imu_integrator
 
     di_out0 = imu_integrator(di, d, dt);
     di=di_out0;
     di_t = [di_t, di];
 end
+
+Dt = t(size(t,2))- t(1);
+x_final = xPlusDelta(initial_condition, di_out0, Dt);
 
 %% Plot Integrated position
 figure('Name','Acceleration, Velocity and Position','NumberTitle','off');
@@ -217,7 +222,9 @@ end
 
 if(write_to_file_const)
     fileID = fopen('data_pure_translation.txt','wt');
-    data = [t',u'];
+    fprintf(fileID,'%g\t',initial_condition'); %initial condition is the first line of the file
+    fprintf(fileID,'\n');
+    data = [t',u1'];
     for ii = 1:size(data,1)
         fprintf(fileID,'%g\t',data(ii,:));
         fprintf(fileID,'\n');
