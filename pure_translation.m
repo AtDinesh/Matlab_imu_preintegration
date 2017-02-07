@@ -31,10 +31,11 @@ ylabel('y posititon');
 zlabel('z posititon');
 legend('generated trajectory');
 
-deg_to_rad = 3.14159265359/180.0;
+deg_to_rad = pi/180.0;
 ax = -sin(t);
 ay = -4*sin(2*t);
 az = -4*sin(2*t);
+a0 = [0; 0; 9.806];
 wx(1,1:(N*fe)) = 0*deg_to_rad; 
 wy(1,1:(N*fe)) = 0*deg_to_rad;
 wz(1,1:(N*fe)) = 0*deg_to_rad;
@@ -70,6 +71,10 @@ di_t0 = di0;
 %UNIT QUATERNION IS [1 0 0 0]
 
 for i=1:N*fe-1
+    R0_1 = v2R(o(:,i));
+    aR = inv(R0_1) * a0;
+    %u(1:3,i) = u(1:3,i) + aR;
+    u1(1:3,i) = inv(R0_1) * u(1:3,i) + aR;
     d = data2delta(b0, u(:,i), n0, dt);
 %% test imu_integrator
 
@@ -177,6 +182,7 @@ subplot(3,1,3);
 plot(t,z(1,:) - di_t(3,:));
 xlabel('z error over time');
 
+
 %% all 3D plots in same figure :
 figure('Name','compare trajectories','NumberTitle','off');
 plot3(x(1,:),y(1,:),z(1,:), 'r');
@@ -186,6 +192,7 @@ xlabel('x posititon');
 ylabel('y posititon');
 zlabel('z posititon');
 legend('real trajectory', 'integrated trajectory');
+
 
 %% write data in file
 
@@ -217,15 +224,15 @@ if(write_to_file_const)
     end
     fclose(fileID);
     
-    fileID_check = fopen('odom.txt','wt');
-    step = 50;
+    fileID_check = fopen('odom_pure_translation.txt','wt');
+    step = 5;
     step_up = step+1;
     t_odom = [];
     p_odom = [];
     o_odom = [];
     for iter = step_up:step:size(x,2)
-        t_odom = [t_odom, t(:,iter) - t(:,iter - step)];
-        p_odom = [p_odom, p(:,iter) - p(:,iter - step)];
+        t_odom = [t_odom, t(:,iter)];
+        p_odom = [p_odom, inv(v2R(o(:,iter) - o(:,iter - step))) * p(:,iter) - p(:,iter - step)];
         o_odom = [o_odom, o(:,iter) - o(:,iter - step)];
     end
     odom = [t_odom', p_odom',o_odom'];

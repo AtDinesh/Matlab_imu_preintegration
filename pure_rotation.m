@@ -22,7 +22,7 @@
 clear all;
 close all;
 
-write_to_file_const = false;
+write_to_file_const = true;
 write_to_file = false;
 
 fe = 1000;
@@ -139,8 +139,7 @@ u1 = [];
 for i=1:N*fe
     R0_1 = v2R(o(:,i));
     aR = inv(R0_1) * a0;
-    u(1:3,i) = u(1:3,i) + aR;
-    u1(1:3,i) = inv(R0_1) * u(1:3,i);
+    u1(1:3,i) = inv(R0_1) * u(1:3,i) + aR;
     %u1(4:6,i) = inv(R0_1) * u(4:6,i);
     u1(4:6,i) = u(4:6,i);
     d = data2delta(b0, u1(:,i), n0, dt);
@@ -361,7 +360,7 @@ end
 
 if(write_to_file_const)
     fileID = fopen('data_pure_rotation.txt','wt');
-    data = [t',u'];
+    data = [t',u1'];
     for ii = 1:size(data,1)
         fprintf(fileID,'%g\t',data(ii,:));
         fprintf(fileID,'\n');
@@ -375,8 +374,8 @@ if(write_to_file_const)
     p_odom = [];
     o_odom = [];
     for iter = step_up:step:size(x,2)
-        t_odom = [t_odom, t(:,iter) - t(:,iter - step)];
-        p_odom = [p_odom, p(:,iter) - p(:,iter - step)];
+        t_odom = [t_odom, t(:,iter)];
+        p_odom = [p_odom, inv(v2R(o(:,iter) - o(:,iter - step))) * p(:,iter) - p(:,iter - step)];
         o_odom = [o_odom, o(:,iter) - o(:,iter - step)];
     end
     odom = [t_odom', p_odom',o_odom'];
