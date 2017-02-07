@@ -50,7 +50,7 @@ xp = x(pr);
 xq = x(qr);
 xv = x(vr);
 
-g = [0; 0; 9.806];
+g = [0; 0; -9.806];
 
 % quaternion integration
 [xq_out, X_OUT_xq, X_OUT_dqi] = qProd(xq, dqi);
