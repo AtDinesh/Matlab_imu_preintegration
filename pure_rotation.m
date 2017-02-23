@@ -26,13 +26,13 @@ write_to_file_const = true;
 write_to_file = false;
 
 fe = 1000;
-N = 100*1;
-t = (0:1/fe:N-1/fe);
+N = 10*1;
+t = (0:1/fe:N);
 
 r = 1;
-alpha = 10;
+alpha = 5;
 beta = 5;
-gamma = 10;
+gamma = 5;
 
 %ox oy oz evolution in degrees (for understanding) --> converted in rad
 %with * pi/180
@@ -40,9 +40,9 @@ ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
 oy = pi*sin(beta*t*pi/180);
 oz = pi*sin(gamma*t*pi/180);
 
-x(1,1:(N*fe)) = 0*t;
-y(1,1:(N*fe)) = 0*t;
-z(1,1:(N*fe)) = 0*t;
+x = 0*t;
+y = 0*t;
+z = 0*t;
 
 %rate of turn expressed in radians/s
 wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
@@ -99,19 +99,21 @@ legend('effect of rotations on unit vector', 'Frame origin', 'starting point [1;
 %% Test
 %build the data vector - pure rotation here
 
-ax(1,1:(N*fe)) = 0;
-ay(1,1:(N*fe)) = 0;
-az(1,1:(N*fe)) = 0;
+ax = 0*t;
+ay = 0*t;
+az = 0*t;
 a0 = [0; 0; 9.806];
-wx(1,1:(N*fe)) = wx; 
-wy(1,1:(N*fe)) = wy;
-wz(1,1:(N*fe)) = wz;
+%rate of turn expressed in radians/s
+wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
+wy = pi*beta*cos(beta*t*pi/180)*pi/180;
+wz = pi*gamma*cos(gamma*t*pi/180)*pi/180;
 u = [ax; ay; az; wx; wy; wz];
 
 %% needed parameters
 
 dt = 1/fe;
 di = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
+initial_condition = di;
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 %u = [10; 5; 2; 110; 30; 50];
 
@@ -126,8 +128,7 @@ n_wz = 0.002*randn(1,(N*fe));
 n0 = [0; 0; 0; 0; 0; 0]; % Zero noise vector
 n = [n_ax; n_ay; n_az; n_wx; n_wy; n_wz]; %noise vector
 
-di_t = di;
-di_t0 = di0;
+di_t = [];
 u1 = [];
 
 %FORMULATION IS PQV
@@ -136,7 +137,7 @@ u1 = [];
 % We know how the angle varies --> i.e. we have the rate of turn
 % components. The integrator deduces how the angle should vary from current
 % state to next state. The angle information is stored in quaternion
-for i=1:N*fe
+for i=1:N*fe+1
     R0_1 = v2R(o(:,i));
     aR = inv(R0_1) * a0;
     u1(1:3,i) = inv(R0_1) * u(1:3,i) + aR;
@@ -152,11 +153,11 @@ end
 
 %% plot orientation over time
  qr = 4:7;
- orientation = []; %Will contain the positions of unit vector after rotation has been applied over time
+ orientation = [ox(1); oy(1); oz(1)]; %Will contain the positions of unit vector after rotation has been applied over time
  angle_reconstruct = []; % Will contain the rotation vector associated to quaternions
  Dq = [];
  
-for j=1:size(di_t,2)-1
+for j=1:size(di_t,2)
     q =  di_t(qr,j);
     pos = q2R(q)*init_pos;
     orientation = [orientation pos];
@@ -211,57 +212,57 @@ legend('reconstructed orientation state', 'real orientation state', 'Frame origi
 % ylabel('pos z - ERROR');
 
 %% error analysis
-error = total_pos - orientation;
-
-%shos evolution of error in angle
-figure('Name','3D orientation error plot','NumberTitle','off');
-plot3(error(1,:), error(2,:), error(3,:));
-hold on;
-plot3(0,0,0,'r*');
-plot3(1,0,0,'g*');
-axis([0 .15E-11 -.2E-11 .2E-11 -.5E-12 .15E-11]);
-xlabel('x error');
-ylabel('y error');
-zlabel('z error');
-
-figure('Name','orientation error through time','NumberTitle','off');
-subplot(3,1,1);
-plot(t, error(1,:));
-xlabel('time');
-ylabel('error x');
-hold on;
-subplot(3,1,2);
-plot(t, error(2,:));
-xlabel('time');
-ylabel('error y');
-subplot(3,1,3);
-plot(t, error(3,:));
-xlabel('time');
-ylabel('error z');
-
-figure('Name','orientation through time','NumberTitle','off');
-subplot(3,1,1);
-plot(t, angle_reconstruct(1,:));
-hold on;
-plot(t, ox(1,:),'r');
-xlabel('time');
-ylabel('angle x');
-legend('reconstructed orientation state', 'real orientation state');
-hold on;
-subplot(3,1,2);
-plot(t, angle_reconstruct(2,:));
-hold on;
-plot(t, oy(1,:),'r');
-xlabel('time');
-ylabel('angle y');
-legend('reconstructed orientation state', 'real orientation state');
-subplot(3,1,3);
-plot(t, angle_reconstruct(3,:));
-hold on;
-plot(t, oz(1,:),'r');
-xlabel('time');
-ylabel('angle z');
-legend('reconstructed orientation state', 'real orientation state');
+% error = total_pos - orientation;
+% 
+% %shos evolution of error in angle
+% figure('Name','3D orientation error plot','NumberTitle','off');
+% plot3(error(1,:), error(2,:), error(3,:));
+% hold on;
+% plot3(0,0,0,'r*');
+% plot3(1,0,0,'g*');
+% axis([0 .15E-11 -.2E-11 .2E-11 -.5E-12 .15E-11]);
+% xlabel('x error');
+% ylabel('y error');
+% zlabel('z error');
+% 
+% figure('Name','orientation error through time','NumberTitle','off');
+% subplot(3,1,1);
+% plot(t, error(1,:));
+% xlabel('time');
+% ylabel('error x');
+% hold on;
+% subplot(3,1,2);
+% plot(t, error(2,:));
+% xlabel('time');
+% ylabel('error y');
+% subplot(3,1,3);
+% plot(t, error(3,:));
+% xlabel('time');
+% ylabel('error z');
+% 
+% figure('Name','orientation through time','NumberTitle','off');
+% subplot(3,1,1);
+% plot(t, angle_reconstruct(1,:));
+% hold on;
+% plot(t, ox(1,:),'r');
+% xlabel('time');
+% ylabel('angle x');
+% legend('reconstructed orientation state', 'real orientation state');
+% hold on;
+% subplot(3,1,2);
+% plot(t, angle_reconstruct(2,:));
+% hold on;
+% plot(t, oy(1,:),'r');
+% xlabel('time');
+% ylabel('angle y');
+% legend('reconstructed orientation state', 'real orientation state');
+% subplot(3,1,3);
+% plot(t, angle_reconstruct(3,:));
+% hold on;
+% plot(t, oz(1,:),'r');
+% xlabel('time');
+% ylabel('angle z');
+% legend('reconstructed orientation state', 'real orientation state');
 
 % figure('Name','orientation through time- CPP','NumberTitle','off');
 % subplot(3,1,1);
@@ -360,6 +361,8 @@ end
 
 if(write_to_file_const)
     fileID = fopen('data_pure_rotation.txt','wt');
+    fprintf(fileID,'%g\t',initial_condition'); %initial condition is the first line of the file
+    fprintf(fileID,'\n');
     data = [t',u1'];
     for ii = 1:size(data,1)
         fprintf(fileID,'%g\t',data(ii,:));
@@ -368,7 +371,7 @@ if(write_to_file_const)
     fclose(fileID);
     
     fileID_check = fopen('odom_pure_rotation.txt','wt');
-    step = 50;
+    step = 5;
     step_up = step+1;
     t_odom = [];
     p_odom = [];

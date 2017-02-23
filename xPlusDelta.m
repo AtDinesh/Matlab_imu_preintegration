@@ -50,13 +50,13 @@ xp = x(pr);
 xq = x(qr);
 xv = x(vr);
 
-g = [0; 0; -9.806];
+g = [0; 0; -9.8];
 
 % quaternion integration
 [xq_out, X_OUT_xq, X_OUT_dqi] = qProd(xq, dqi);
 
 % velocity integration
-[xv_tmp, XVT_dvi, XVT_dxq] =  qRot(dvi, xq);
+[xv_tmp, XVT_dvi, XVT_xq] =  qRot(dvi, xq);
 xv_out = xv + xv_tmp + g * Dt;
 
 % position integration
