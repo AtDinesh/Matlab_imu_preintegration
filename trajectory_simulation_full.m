@@ -3,9 +3,6 @@
 % and give those value to the imu integrator to recompute the trajectory.
 % Using trigonometry is ok : position won't go to infinity + loop.
 
-%THIS IS PURE TRANLSATION
-%rate of turn set to 0 (wx = wy= wz = 0) for all the trajectory.
-
 %*****************************WORKING*********************
 %%
 close all;
@@ -28,9 +25,6 @@ gamma = 5;
 
 %ox oy oz evolution in degrees (for understanding) --> converted in rad
 %with * pi/180
-%ox = 0*t;
-%oy = 0*t;
-%oz = 0*t;
 ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
 oy = pi*sin(beta*t*pi/180);
 oz = pi*sin(gamma*t*pi/180);
@@ -45,8 +39,6 @@ a0 = [0; 0; 9.8];
 %rate of turn expressed in radians/s
 wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
 wy = pi*beta*cos(beta*t*pi/180)*pi/180;
-%wx = 0*t;
-%wy = 0*t;
 wz = pi*gamma*cos(gamma*t*pi/180)*pi/180;
 
 u = [ax; ay; az; wx; wy; wz];
@@ -161,9 +153,7 @@ if(write_to_file_const)
     for iter = step_up:step:size(x,2)
         t_odom = [t_odom, t(:,iter)];
         p_odom = [p_odom, state_vec(1:3,iter) -  state_vec(1:3,iter - step)];
-        %p_odom = [p_odom, p(:,iter) -  p(:,iter - step)];
         o_odom = [o_odom, q2v(qProd(q2qc(state_vec(4:7, iter-step)), state_vec(4:7, iter))) ];
-        %o_odom = [o_odom, [0; 0; 0]];
     end
     odom = [t_odom', p_odom',o_odom'];
     for ii = 1:size(odom,1)
