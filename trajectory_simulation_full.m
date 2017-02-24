@@ -28,11 +28,11 @@ gamma = 5;
 
 %ox oy oz evolution in degrees (for understanding) --> converted in rad
 %with * pi/180
-ox = 0*t;
-oy = 0*t;
+%ox = 0*t;
+%oy = 0*t;
 %oz = 0*t;
-%ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
-%oy = pi*sin(beta*t*pi/180);
+ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
+oy = pi*sin(beta*t*pi/180);
 oz = pi*sin(gamma*t*pi/180);
 
 
@@ -43,10 +43,10 @@ az = -4*sin(2*t);
 a0 = [0; 0; 9.8];
 
 %rate of turn expressed in radians/s
-%wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
-%wy = pi*beta*cos(beta*t*pi/180)*pi/180;
-wx = 0*t;
-wy = 0*t;
+wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
+wy = pi*beta*cos(beta*t*pi/180)*pi/180;
+%wx = 0*t;
+%wy = 0*t;
 wz = pi*gamma*cos(gamma*t*pi/180)*pi/180;
 
 u = [ax; ay; az; wx; wy; wz];
@@ -61,14 +61,14 @@ di = [0; 0; 0; 1; 0; 0; 0; 1.0; 2.0; 2.0];
 initial_condition = di;
 di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
 
-b0 = [0; 0; 0; 0; 0; 0]; %bias vector
+b0 = [0.06; 0.025; -0.0033; 0.045; -0.027; 0.08]; %bias vector
 
-n_ax = 0.04*randn(1,(N*fe));
-n_ay = 0.04*randn(1,(N*fe));
-n_az = 0.04*randn(1,(N*fe));
-n_wx = 0.002*randn(1,(N*fe));
-n_wy = 0.002*randn(1,(N*fe));
-n_wz = 0.002*randn(1,(N*fe));
+n_ax = 0.012*randn(1,(N*fe)+1);
+n_ay = 0.012*randn(1,(N*fe)+1);
+n_az = 0.012*randn(1,(N*fe)+1);
+n_wx = 0.15*randn(1,(N*fe)+1);
+n_wy = 0.15*randn(1,(N*fe)+1);
+n_wz = 0.15*randn(1,(N*fe)+1);
 n0 = [0; 0; 0; 0; 0; 0]; %noise vector
 n = [n_ax; n_ay; n_az; n_wx; n_wy; n_wz]; %noise vector
 
@@ -85,6 +85,15 @@ for i=1:N*fe+1
     %R0_1 = v2R(current_orientation);
     R0_1 = q2R(state_vec(4:7, size(state_vec,2)));
     aR = inv(R0_1) * a0;
+    
+    % add bias and noise
+    u(:,i) = u(:,i) + b0;
+    u(:,i) = u(:,i) + n(:,i);
+    % express the acceleration in the global frame if we want the IMU to
+    % follow the trajectory defined by [x y z]. Then the IMU will rotate
+    % along this trajectory and the accelerations will be expressed in the
+    % new local frame
+    
     %u1(1:3,i) = u(1:3,i) + aR;
     u1(1:3,i) = inv(R0_1) * u(1:3,i) + aR;
     u1(4:6,i) = u(4:6,i);
@@ -131,19 +140,20 @@ legend('real trajectory', 'integrated trajectory', 'integrated states');
 
 if(write_to_file_const)
     fileID = fopen('data_trajectory_full.txt','wt');
-    fprintf(fileID,'%3.15f\t',initial_condition'); %initial condition is the first line of the file
+    fprintf(fileID,'%3.16f\t',initial_condition'); %initial condition is the first line of the file
+    fprintf(fileID,'%3.16f\t',b0'); %bias
     fprintf(fileID,'\n');
     data = [t',u1'];
     for ii = 1:size(data,1)
-        fprintf(fileID,'%3.15f\t',data(ii,:));
+        fprintf(fileID,'%3.16f\t',data(ii,:));
         fprintf(fileID,'\n');
     end
     fclose(fileID);
     
     fileID_check = fopen('odom_trajectory_full.txt','wt');
-    fprintf(fileID_check,'%3.15f\t',x_final);
+    fprintf(fileID_check,'%3.16f\t',x_final);
     fprintf(fileID_check,'\n');
-    step = 10;
+    step = 1000;
     step_up = step+1;
     t_odom = [];
     p_odom = [];
@@ -152,12 +162,12 @@ if(write_to_file_const)
         t_odom = [t_odom, t(:,iter)];
         p_odom = [p_odom, state_vec(1:3,iter) -  state_vec(1:3,iter - step)];
         %p_odom = [p_odom, p(:,iter) -  p(:,iter - step)];
-        o_odom = [o_odom, q2v(qProd(state_vec(4:7, iter), q2qc(state_vec(4:7, iter-step)))) ];
+        o_odom = [o_odom, q2v(qProd(q2qc(state_vec(4:7, iter-step)), state_vec(4:7, iter))) ];
         %o_odom = [o_odom, [0; 0; 0]];
     end
     odom = [t_odom', p_odom',o_odom'];
     for ii = 1:size(odom,1)
-        fprintf(fileID_check,'%3.15f\t',odom(ii,:));
+        fprintf(fileID_check,'%3.16f\t',odom(ii,:));
         fprintf(fileID_check,'\n');
     end
     fclose(fileID_check);
