@@ -50,7 +50,7 @@ xp = x(pr);
 xq = x(qr);
 xv = x(vr);
 
-g = [0; 0; -9.8];
+g = [0; 0; -9.8060];
 
 % quaternion integration
 [xq_out, X_OUT_xq, X_OUT_dqi] = qProd(xq, dqi);
@@ -61,11 +61,10 @@ xv_out = xv + xv_tmp + g * Dt;
 
 % position integration
 [xp_tmp, XPT_dpi, XPT_xq] = qRot(dpi, xq);
-xp_out = xp + xv * Dt + xp_tmp + g * Dt * Dt / 2;
+xp_out = xp + xv * Dt + xp_tmp + g * (Dt * Dt) / 2;
 
 % assemble final state
 x_out = [xp_out; xq_out; xv_out]; % In this order please!
-
 
 end
 
