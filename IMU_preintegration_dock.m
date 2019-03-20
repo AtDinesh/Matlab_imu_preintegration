@@ -85,12 +85,12 @@ bWx = zeros(M,1); bWy = zeros(M,1); bWz = zeros(M,1);
 %%
 % We now simulate t*fe steps of a random walk
 for ii = 2:M
-    bAx(ii) = bAx(ii-1)+RandDir(N)*0.001;
-    bAy(ii) = bAy(ii-1)+RandDir(N)*0.001;
-    bAz(ii) = bAz(ii-1)+RandDir(N)*0.001;
-    bWx(ii) = bWx(ii-1)+RandDir(N)*0.001;
-    bWy(ii) = bWy(ii-1)+RandDir(N)*0.001;
-    bWz(ii) = bWz(ii-1)+RandDir(N)*0.001;
+    bAx(ii) = bAx(ii-1)+RandDir(N)*0.005;
+    bAy(ii) = bAy(ii-1)+RandDir(N)*0.005;
+    bAz(ii) = bAz(ii-1)+RandDir(N)*0.005;
+    bWx(ii) = bWx(ii-1)+RandDir(N)*0.005;
+    bWy(ii) = bWy(ii-1)+RandDir(N)*0.005;
+    bWz(ii) = bWz(ii-1)+RandDir(N)*0.005;
 end
 
 figure();

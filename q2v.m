@@ -27,6 +27,10 @@ else
 
 end
 
+if(isnan(v))
+    v = zeros(3,1);
+end
+
 return
 
 %%
