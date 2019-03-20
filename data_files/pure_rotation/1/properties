@@ -1,0 +1,24 @@
+alpha = 10;
+beta = 5;
+gamma = 10;
+
+%ox oy oz evolution in degrees (for understanding) --> converted in rad
+%with * pi/180
+ox = pi*sin(alpha*t*pi/180); %express angle in rad before using sinus
+oy = pi*sin(beta*t*pi/180);
+%oz = 2*pi*sin(gamma*t*pi/180);
+%oy = 0*t;
+oz = 0*t;
+
+x(1,1:(N*fe)) = 0*t;
+y(1,1:(N*fe)) = 0*t;
+z(1,1:(N*fe)) = 0*t;
+
+%rate of turn expressed in radians/s
+wx = pi*alpha*cos(alpha*t*pi/180)*pi/180;
+wy = pi*beta*cos(beta*t*pi/180)*pi/180;
+%wz = 2*pi*gamma*cos(gamma*t*pi/180)*pi/180;
+%wy = 0*t;
+wz = 0*t;
+
+rate of turn expressed in local frame

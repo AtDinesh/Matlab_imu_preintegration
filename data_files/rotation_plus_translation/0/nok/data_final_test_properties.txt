@@ -1,0 +1,35 @@
+fe = 1000;
+N = 100*1;
+t = (0:1/fe:N-1/fe);
+
+write_to_file = false;
+
+%% position + orientation
+%position
+x = sin(t);
+y = sin(2*t);
+z = sin(5*t);
+
+%orientation
+alpha = 50; %degree per second rotation around x axis
+beta = 70; %degree per second rotation around y axis
+gamma = 100; %degree per second rotation around z axis
+
+ox = alpha*t*pi/180;
+oy = beta*t*pi/180;
+oz = gamma*t*pi/180;
+
+%% construct data in R0
+deg_to_rad = 3.14159265359/180.0;
+ax = -sin(t);
+ay = -4*sin(2*t);
+az = -25*sin(5*t);
+wx(1,1:(N*fe)) = alpha*pi/180;
+wy(1,1:(N*fe)) = beta*pi/180;
+wz(1,1:(N*fe)) = gamma*pi/180;
+u = [ax; ay; az; wx; wy; wz];
+
+%% needed parameters
+
+dt = 1/fe;
+di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 5];

@@ -1,0 +1,29 @@
+fe = 1000;
+N = 100*1;
+t = (0:1/fe:N-1/fe);
+
+p_alpha = 1;
+p_beta = 2;
+p_gamma = 5;
+
+x = sin(p_alpha*t);
+y = sin(p_beta*t);
+z = sin(p_gamma*t);
+
+%orientation
+alpha = 5;
+beta = 2.4;
+gamma = 3;
+
+ox = sin(alpha*t)*pi;
+oy = sin(beta*t)*pi;
+oz = sin(gamma*t)*pi;
+
+o = [ox; oy; oz];
+
+dt = 1/fe;
+di = [0; 0; 0; 1; 0; 0; 0; 1; 2; 5];
+di0 = [0; 0; 0; 1; 0; 0; 0; 0; 0; 0];
+
+b0 = [0; 0; 0; 0; 0; 0]; %bias vector
+n0 = [0; 0; 0; 0; 0; 0]; %noise vector
